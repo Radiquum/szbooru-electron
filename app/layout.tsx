@@ -1,10 +1,7 @@
 import "beercss";
 import "material-dynamic-colors";
-
+import { App } from "./app";
 import type { Metadata } from "next";
-
-import { AppBarPC } from "./components/AppBar/AppBar";
-import { NavRailPC } from "./components/NavRail/NavRail";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,13 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="background">
-        <AppBarPC />
-        <NavRailPC />
-        <main className="small-margin">
-          {children}
-        </main>
-      </body>
+      <App>{children}</App>
     </html>
   );
 }
