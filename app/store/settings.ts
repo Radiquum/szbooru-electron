@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type BooruType = "szbooru"
+export const availableBooruTypes: BooruType[] = ["szbooru"]
 
 type Booru = {
   id: number;
