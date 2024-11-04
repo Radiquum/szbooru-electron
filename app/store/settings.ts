@@ -5,30 +5,29 @@ import { persist } from "zustand/middleware";
 type BooruType = "szurubooru"
 export const availableBooruTypes: BooruType[] = ["szurubooru"]
 
-type Booru = {
+export type Booru = {
   id: number;
-  type: BooruType,
+  type: BooruType;
   host: string;
   username: string | null;
   token: string | null;
 };
 
-interface settings {
-  boorus: Array<Booru>;
-}
-
 interface settingsState {
   _hasHydrated: boolean;
-  settings: settings;
+  boorus: Array<Booru>;
   setHasHydrated: (state: boolean) => void;
+  addNewBooru: (booru: Booru) => void
 }
 
 export const useSettingsStore = create<settingsState>()(
   persist(
     (set, get) => ({
       _hasHydrated: false,
-      settings: {
-        boorus: [],
+      boorus: [],
+      addNewBooru: (newBooru: Booru) => {
+        const newArray = [...get().boorus, newBooru]
+        set({boorus: newArray})
       },
       setHasHydrated: (state) => {
         set({

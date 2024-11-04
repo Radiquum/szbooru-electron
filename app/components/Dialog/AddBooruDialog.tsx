@@ -1,19 +1,25 @@
 "use client";
-import { useSettingsStore, availableBooruTypes } from "@/app/store/settings";
+import {
+  useSettingsStore,
+  availableBooruTypes,
+  Booru,
+} from "@/app/store/settings";
 import { useState } from "react";
 import { SZ_GetInfo } from "@/app/booru/szbooru/utils";
 import { SZ_TYPE_Info } from "@/app/booru/szbooru/types/api/info";
-import { SZ_GetLoggedUser } from "@/app/booru/szbooru/auth";
+import { SZ_CreateUserToken, SZ_GetLoggedUser } from "@/app/booru/szbooru/auth";
 
 export const AddBooruDialog = (props: {
   isFullscreen?: boolean;
-  isActive?: boolean;
   isFirstlaunch?: boolean;
+  isActive: boolean;
+  setIsActive: any;
 }) => {
   const [booruType, setBooruType] = useState(availableBooruTypes[0]);
   const [host, setHost] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const settingsStore = useSettingsStore();
 
   function handleInput(e: any) {
     if (e.target.name == "host") {
@@ -31,6 +37,7 @@ export const AddBooruDialog = (props: {
     e.preventDefault();
     if (booruType == "szurubooru") {
       async function _testSZBooru() {
+        let token;
         const BooruInfo: SZ_TYPE_Info = await SZ_GetInfo(host);
         const checkPerms = [
           BooruInfo.config.privileges["posts:list"],
@@ -41,11 +48,33 @@ export const AddBooruDialog = (props: {
           (username == "" || password == "")
         ) {
           alert("Login is required");
+          return false;
         }
         if (username && password) {
-          const user = await SZ_GetLoggedUser(host, username, password)
-          alert(user)
+          const user = await SZ_GetLoggedUser(host, username, password);
+          if (!user) {
+            alert("can't log in");
+            return false;
+          }
+          token = await SZ_CreateUserToken(host, username, password);
+          if (!token) {
+            alert("can't create token");
+            return false;
+          }
         }
+
+        const id = settingsStore.boorus.length + 1;
+
+        const newBooru: Booru = {
+          id,
+          type: "szurubooru",
+          host,
+          username,
+          token: token ? token.token : null,
+        };
+
+        settingsStore.addNewBooru(newBooru);
+        props.setIsActive(false);
       }
       _testSZBooru();
     }
