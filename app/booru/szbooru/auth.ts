@@ -6,18 +6,20 @@ import { SZ_ENDPOINTS } from "./endpoints";
 export async function SZ_GetLoggedUser(
   HOST: string,
   username: string,
-  password: string
+  password: string,
+  bumpLogin?: boolean,
+  authType: "Basic" | "Token" = "Basic"
 ) {
   try {
     const res = await fetch(
-      `/api/${SZ_ENDPOINTS.getUser}/${username}?bump-login=true`,
+      `/api/${SZ_ENDPOINTS.getUser}/${username}${bumpLogin ? "?bump-login=true" : ""}`,
       {
         headers: {
           "X-HOST": HOST,
           "X-TYPE": "szurubooru",
           "X-PREFIX": "/api/",
           "X-CUSTOM": JSON.stringify({
-            authorization: `Basic ${btoa(username + ":" + password)}`,
+            authorization: `${authType} ${btoa(username + ":" + password)}`,
           }),
         },
       }

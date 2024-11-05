@@ -2,22 +2,24 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type BooruType = "szurubooru"
-export const availableBooruTypes: BooruType[] = ["szurubooru"]
+export type BooruType = "szurubooru";
+export const availableBooruTypes: BooruType[] = ["szurubooru"];
 
 export type Booru = {
   id: number;
   type: BooruType;
   host: string;
-  username: string | null;
-  token: string | null;
+  username: string;
+  token: string;
 };
 
 interface settingsState {
   _hasHydrated: boolean;
   boorus: Array<Booru>;
+  lastActiveBooru: number;
   setHasHydrated: (state: boolean) => void;
-  addNewBooru: (booru: Booru) => void
+  setLastActiveBooru: (id: number) => void;
+  addNewBooru: (booru: Booru) => void;
 }
 
 export const useSettingsStore = create<settingsState>()(
@@ -25,13 +27,19 @@ export const useSettingsStore = create<settingsState>()(
     (set, get) => ({
       _hasHydrated: false,
       boorus: [],
+      lastActiveBooru: 0,
       addNewBooru: (newBooru: Booru) => {
-        const newArray = [...get().boorus, newBooru]
-        set({boorus: newArray})
+        const newArray = [...get().boorus, newBooru];
+        set({ boorus: newArray });
       },
       setHasHydrated: (state) => {
         set({
           _hasHydrated: state,
+        });
+      },
+      setLastActiveBooru: (state) => {
+        set({
+          lastActiveBooru: state,
         });
       },
     }),

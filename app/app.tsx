@@ -3,11 +3,26 @@ import { AppBarPC } from "./components/AppBar/AppBar";
 import { NavRailPC } from "./components/NavRail/NavRail";
 import { useSettingsStore } from "./store/settings";
 import { AddBooruDialog } from "./components/Dialog/AddBooruDialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useUserStore } from "./store/auth";
 
 export const App = (props: any) => {
   const settingsStore = useSettingsStore();
+  const userStore = useUserStore();
   const [isFirstSetupActive, setIsFirstSetupActive] = useState(true);
+
+  useEffect(() => {
+    const ActiveBooru = settingsStore.boorus[settingsStore.lastActiveBooru];
+    console.log(ActiveBooru)
+    if (ActiveBooru) {
+      userStore.checkAuth(
+        ActiveBooru.host,
+        ActiveBooru.type,
+        ActiveBooru.username,
+        ActiveBooru.token
+      );
+    }
+  }, [settingsStore.lastActiveBooru, settingsStore._hasHydrated]);
 
   return (
     <body className="background">

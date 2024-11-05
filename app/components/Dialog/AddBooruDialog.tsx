@@ -4,6 +4,7 @@ import {
   availableBooruTypes,
   Booru,
 } from "@/app/store/settings";
+import { useUserStore } from "@/app/store/auth";
 import { useState } from "react";
 import { SZ_GetInfo } from "@/app/booru/szbooru/utils";
 import { SZ_TYPE_Info } from "@/app/booru/szbooru/types/api/info";
@@ -20,6 +21,7 @@ export const AddBooruDialog = (props: {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const settingsStore = useSettingsStore();
+  const userStore = useUserStore();
 
   function handleInput(e: any) {
     if (e.target.name == "host") {
@@ -51,7 +53,13 @@ export const AddBooruDialog = (props: {
           return false;
         }
         if (username && password) {
-          const user = await SZ_GetLoggedUser(host, username, password);
+          const user = await SZ_GetLoggedUser(
+            host,
+            username,
+            password,
+            true,
+            "Basic"
+          );
           if (!user) {
             alert("can't log in");
             return false;
@@ -61,16 +69,17 @@ export const AddBooruDialog = (props: {
             alert("can't create token");
             return false;
           }
+          userStore.login(user);
         }
 
-        const id = settingsStore.boorus.length + 1;
+        const id = settingsStore.boorus.length;
 
         const newBooru: Booru = {
           id,
           type: "szurubooru",
           host,
           username,
-          token: token ? token.token : null,
+          token: token ? token.token : "",
         };
 
         settingsStore.addNewBooru(newBooru);

@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUserStore } from "@/app/store/auth";
 
 export const NavRailPC = () => {
+  const userStore = useUserStore();
   const pathname = usePathname();
   const links = [
     {
@@ -28,16 +30,20 @@ export const NavRailPC = () => {
   return (
     <nav className="surface-container-high m l left">
       <button className="transparent circle extra">
-        <img className="responsive" src="/favicon.ico" />
+        <img
+          className="responsive"
+          src={userStore.isAuth ? userStore.user?.avatarUrl : "/favicon.ico"}
+        />
       </button>
-      {links.map((link) => {
-        return (
-          <Link href={link.path} key={link.id}>
-            <i className={pathname == link.path ? "fill" : ""}>{link.icon}</i>
-            <span>{link.name}</span>
-          </Link>
-        );
-      })}
+      {userStore.isAuth &&
+        links.map((link) => {
+          return (
+            <Link href={link.path} key={link.id}>
+              <i className={pathname == link.path ? "fill" : ""}>{link.icon}</i>
+              <span>{link.name}</span>
+            </Link>
+          );
+        })}
       <div className="max"></div>
       <a>
         <i>settings</i>
