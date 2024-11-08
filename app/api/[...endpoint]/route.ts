@@ -29,6 +29,8 @@ export async function GET(
     }`;
   }
 
+  console.log(`GET VIA PROXY REQUEST: ${url}\n \t HOST: ${hostname} \n \t TYPE: ${type} \n \t PREFIX: ${prefix} \n \t HEADERS: ${req.headers.get("X-CUSTOM")} \n `)
+
   const response = await fetchDataViaGet(url, customHeaders);
   return NextResponse.json(response);
 }
