@@ -77,12 +77,20 @@ export default function PostPage() {
           console.log("ROW ITEM:", j, "CUR POST:", post, postsData[post]);
           if (postsData[post]) {
             row_items.push(
-              <div key={`grid-row-post-${post}`} className={Styles.card}>
+              <article key={`grid-row-post-${post}`} className={`no-padding round ${Styles.card}`}>
                 <img
-                  className={Styles.card}
                   src={`${activeBooru.host}/${postsData[post].thumbnailUrl}`}
                 />
-              </div>
+                <div className="absolute bottom left right padding bottom-shadow bottom-round white-text">
+                  <nav>
+                    <h5>Title</h5>
+                    <div className="max"></div>
+                    {/* <button className="circle transparent">
+                            <i>more_vert</i>
+                        </button> */}
+                  </nav>
+                </div>
+              </article>
             );
           }
           post++;
